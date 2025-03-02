@@ -29,6 +29,8 @@ P_18 = (3.8, 7.1)
 
 SETTINGS = {
     'seed': 14870,
+    'cam_pos': (12, CAM_HEIGHT, 12),
+    'cam_target': (5, CAM_HEIGHT, 5)
 }
 
 

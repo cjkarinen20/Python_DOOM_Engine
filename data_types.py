@@ -5,8 +5,8 @@ class Segment:
         #
         self.pos: tuple[vec2] = vec2(p0), vec2(p1)
         self.vector: vec2 = self.pos[1] - self.pos[0]
-        
-    
+
+
 class BSPNode:
     def __init__(self):
         #
@@ -18,4 +18,3 @@ class BSPNode:
         self.splitter_vec: vec2 = None
         #
         self.segment_id: int = None
-            
