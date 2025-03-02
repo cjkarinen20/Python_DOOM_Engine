@@ -1,0 +1,27 @@
+{
+        "configurations": [
+          {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/${input:programPath}"
+          }
+        ],
+        "inputs": [
+          {
+            "type": "pickString",
+            "id": "programPath",
+            "description": "Select the Python file to debug",
+            "options": [
+              "main.py",
+              "data_types.py",
+              "engine.py",
+              "level_data.py",
+              "levels/test_level.py",
+              "map_renderer.py",
+              "settings.py",
+              "utils.py"
+            ]
+          }
+        ]
+}
