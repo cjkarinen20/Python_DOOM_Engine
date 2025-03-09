@@ -39,5 +39,5 @@ class InputHandler:
         #------------MAP--------------#
         if is_key_pressed(Key.MAP):
             logging.info("Toggling map")
-            self.engine.map_renderer.is_draw_map = not self.engine.map_renderer.is_draw_map
+            self.engine.map_renderer.should_draw = not self.engine.map_renderer.should_draw
             self.engine.view_renderer.update_screen_tint()

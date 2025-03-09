@@ -9,14 +9,25 @@ class MapRenderer:
         raw_segments = [seg.pos for seg in self.engine.level_data.raw_segments]
         self.x_min, self.y_min, self.x_max, self.y_max = self.get_bounds(raw_segments)
         #
+        self.x_out_max, self.y_out_max = self.get_map_bounds()
+        #
         self.raw_segments = self.remap_array(raw_segments)
         #
         self.segments = self.remap_array(
             [seg.pos for seg in self.engine.bsp_builder.segments])
         self.counter = 0.0
         #
-        self.is_draw_map = False
+        self.should_draw = False
 
+    def get_map_bounds(self):
+        dx = self.x_max - self.x_min
+        dy = self.y_max - self.y_min
+        #
+        delta = min(MAP_WIDTH / dx, MAP_HEIGHT / dy)
+        x_out_max = delta * dx
+        y_out_max = delta * dy
+        return x_out_max, y_out_max
+    
     def draw(self):
         self.draw_raw_segments()
         self.draw_segments()
@@ -40,7 +51,9 @@ class MapRenderer:
             ray.draw_line_v((x0, y0), (x1, y1), seg_color)
             self.draw_normal(p0, p1, seg_color)
             #
-            ray.draw_circle_v((x0, y0), 3, ray.WHITE)
+            ray.draw_circle_v((x0, y0), 2, ray.WHITE)
+            ray.draw_circle_v((x1, y1), 2, ray.WHITE)
+            
 
     def draw_normal(self, p0, p1, color, scale=12):
         p10 = p1 - p0
@@ -63,12 +76,14 @@ class MapRenderer:
         y = self.remap_y(p.y)
         return vec2(x, y)
 
-    def remap_x(self, x, out_min=MAP_OFFSET, out_max=MAP_WIDTH):
+    def remap_x(self, x, out_min=MAP_OFFSET):
+        out_max = self.x_out_max
         return (x - self.x_min) * (out_max - out_min) / (self.x_max - self.x_min) + out_min
 
-    def remap_y(self, y, out_min=MAP_OFFSET, out_max=MAP_HEIGHT):
+    def remap_y(self, y, out_min=MAP_OFFSET):
+        out_max = self.y_out_max
         return (y - self.y_min) * (out_max - out_min) / (self.y_max - self.y_min) + out_min
-
+    
     @staticmethod
     def get_bounds(segments: list[tuple[vec2]]):
         inf = float('inf')

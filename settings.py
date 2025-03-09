@@ -34,6 +34,7 @@ JUMP_DURATION = 5.0
 #--FIELD OF VIEW--
 FOV_Y_DEG = 75
 
+LIGHT_POS = vec2(-30)
 #
 VEC3_ZERO = ray.Vector3(0,0,0)
 VEC2_ZERO = ray.Vector2(0,0)
@@ -41,3 +42,6 @@ VEC2_ZERO = ray.Vector2(0,0)
 WHITE_COLOR = ray.Color(255, 255, 255, 255)
 BLACK_COLOR = ray.Color(0, 0, 0, 255)
 DARK_GRAY_COLOR = ray.Color(80, 80, 80, 255)
+#
+SHADING_COLOR = ray.Color(220, 220, 220, 255)
+SHADING_DARK_COLOR = ray.Color(45, 45, 45, 255)

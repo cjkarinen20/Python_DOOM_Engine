@@ -6,6 +6,7 @@ from bsp.bsp_traverser import BSPTreeTraverser
 from camera import Camera
 from input_handler import InputHandler
 from view_renderer import ViewRenderer
+from time import perf_counter
 
 class Engine:
     def __init__(self, app):
@@ -34,7 +35,7 @@ class Engine:
         self.view_renderer.update()
 
     def draw_2d(self):
-        self.map_renderer.draw() if self.map_renderer.is_draw_map else ray.draw_fps(10, 10)
+        self.map_renderer.draw() if self.map_renderer.should_draw else ray.draw_fps(10, 10)
 
     def draw_3d(self):
         #Lock cursor to the center of the window
@@ -44,7 +45,7 @@ class Engine:
         #
         ray.begin_mode_3d(self.camera.m_cam)
         #
-        ray.draw_grid(32, 1.0)
+        self.view_renderer.draw()
         #
         ray.end_mode_3d()
 
