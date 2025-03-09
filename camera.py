@@ -1,4 +1,5 @@
 from settings import *
+import logging
 
 def ease_out_cubic(t):
     return 1 - pow(1 - t, 3)
@@ -30,8 +31,6 @@ class Camera:
         self.jump_velocity = 0.0
         self.is_jumping = False
         self.gravity = GRAVITY
-        self.jump_start_height = JUMP_START_POS
-        self.jump_duration = JUMP_DURATION
         
     def get_yaw_pitch(self):
         mouse_delta = ray.get_mouse_delta()
@@ -72,25 +71,23 @@ class Camera:
     def apply_gravity(self):
         if self.is_jumping:
             self.jump_velocity += self.gravity * self.app.dt
-            self.jump_duration += self.app.dt
-            #
-            t = JUMP_DURATION
-            eased_t = ease_out_cubic(t)
-            #
-            self.pos_3d.y = self.jump_start_height + self.jump_velocity * eased_t * self.app.dt
-            self.target.y = self.pos_3d.y
-            #
-            if self.pos_3d.y <= CAM_HEIGHT: #Ground check
+            self.pos_3d.y += self.jump_velocity * self.app.dt
+            self.target.y += self.jump_velocity * self.app.dt
+            
+            logging.info(f"Jumping: pos_3d.y = {self.pos_3d.y}, jump_velocity = {self.jump_velocity}")
+
+            if self.pos_3d.y <= 0.0 + CAM_HEIGHT:  # Ensure the player lands slightly above the floor
+                self.pos_3d.y = CAM_HEIGHT
                 self.target.y = CAM_HEIGHT
                 self.is_jumping = False
                 self.jump_velocity = 0.0
-                self.jump_duration = 0.0
+                logging.info("Landed: pos_3d.y set to CAM_HEIGHT")
+
         else:
-            if ray.is_key_pressed(ray.KEY_SPACE):
+            if ray.is_key_pressed(ray.KEY_SPACE):  # Detect the jump key press
                 self.is_jumping = True
                 self.jump_velocity = JUMP_VELOCITY
-                self.jump_start_height = self.pos_3d.y
-                self.jump_duration = 0.0
+                logging.info(f"Jump started: jump_velocity = {self.jump_velocity}")
                 
 
     def update_vectors(self):
