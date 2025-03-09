@@ -4,6 +4,7 @@ from settings import *
 class MapRenderer:
     def __init__(self, engine):
         self.engine = engine
+        self.camera = engine.camera
         #
         raw_segments = [seg.pos for seg in self.engine.level_data.raw_segments]
         self.x_min, self.y_min, self.x_max, self.y_max = self.get_bounds(raw_segments)
@@ -13,6 +14,8 @@ class MapRenderer:
         self.segments = self.remap_array(
             [seg.pos for seg in self.engine.bsp_builder.segments])
         self.counter = 0.0
+        #
+        self.is_draw_map = False
 
     def draw(self):
         self.draw_raw_segments()
@@ -20,15 +23,18 @@ class MapRenderer:
         self.draw_player()
         self.counter += 0.0005
 
-    def draw_player(self):
-        x0, y0 = p0 = self.remap_vec2(self.engine.bsp_traverser.cam_pos)
+    def draw_player(self, dist=100):
+        x0, y0 = p0 = self.remap_vec2(self.camera.pos_2d)
+        x1, y1 = p0 + self.camera.forward.xz * dist
+        #
+        ray.draw_line_v((x0, y0), (x1, y1), ray.WHITE)
         ray.draw_circle_v((x0, y0), 10, ray.GREEN)
 
     def draw_segments(self, seg_color=ray.ORANGE):
         segment_ids = self.engine.bsp_traverser.seg_ids_to_draw
         #
-        # for seg_id in segment_ids:
-        for seg_id in segment_ids[:int(self.counter) % (len(segment_ids) + 1)]:
+        for seg_id in segment_ids:
+        # for seg_id in segment_ids[:int(self.counter) % (len(segment_ids) + 1)]:
             (x0, y0), (x1, y1) = p0, p1 = self.segments[seg_id]
             #
             ray.draw_line_v((x0, y0), (x1, y1), seg_color)

@@ -5,6 +5,8 @@ class Segment:
         #
         self.pos: tuple[vec2] = vec2(p0), vec2(p1)
         self.vector: vec2 = self.pos[1] - self.pos[0]
+        #
+        self.wall_model_id: set[int] = set()
 
 
 class BSPNode:

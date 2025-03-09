@@ -21,19 +21,32 @@ class Camera:
         self.right = vec3(0)
         #
         self.yaw = atan2(self.target.z - self.pos_3d.z, self.target.x - self.pos_3d.x)
+        self.pitch = 0.0
         self.delta_yaw = 0.0
+        self.delta_pitch = 0.0
         
-    def get_yaw(self):
-        self.delta_yaw = -ray.get_mouse_delta().x * CAM_ROT_SPEED * self.app.dt
+    def get_yaw_pitch(self):
+        mouse_delta = ray.get_mouse_delta()
+        self.delta_yaw = -mouse_delta.x * CAM_ROT_SPEED * CAM_SENSITIVITY * self.app.dt
+        self.delta_pitch = -mouse_delta.y * CAM_ROT_SPEED * CAM_SENSITIVITY * self.app.dt
+        #Update yaw
         self.yaw -= self.delta_yaw
+        #Update pitch and clamp it
+        self.pitch = max(min(self.pitch + self.delta_pitch, CAM_PITCH_LIMIT), -CAM_PITCH_LIMIT) 
         
-    def set_yaw(self):
-        self.get_yaw()
+    def set_yaw_pitch(self):
+        self.get_yaw_pitch()
         #
-        new_target_pos = glm.rotateY(self.forward, self.delta_yaw)
+        front = vec3(
+            cos(radians(self.yaw)) * cos(radians(self.pitch)),
+            sin(radians(self.pitch)),
+            sin(radians(self.yaw)) * cos(radians(self.pitch))
+        )
+        new_target_pos = glm.normalize(front)
         self.update_target(new_target_pos)
         
     def update_target(self, new_target_pos: vec3):
+        self.target.y = self.pos_3d.y + new_target_pos.y
         self.target.x = self.pos_3d.x + new_target_pos.x
         self.target.z = self.pos_3d.z + new_target_pos.z
 
@@ -44,7 +57,7 @@ class Camera:
     def update(self):
         self.check_cam_step()
         self.update_pos_2d()
-        self.set_yaw()
+        self.set_yaw_pitch()
         self.move()
 
     def update_vectors(self):

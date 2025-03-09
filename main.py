@@ -3,6 +3,7 @@ from engine import Engine
 
 class App:
     ray.set_trace_log_level(ray.LOG_ERROR)
+    ray.set_config_flags(ray.FLAG_MSAA_4X_HINT)
     ray.init_window(WIN_WIDTH, WIN_HEIGHT, 'BSP Engine')
     
     def __init__(self):
