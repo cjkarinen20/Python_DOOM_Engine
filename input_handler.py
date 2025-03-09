@@ -12,6 +12,7 @@ class Key(IntEnum):
     STRAFE_LEFT = KeyboardKey.KEY_A
     STRAFE_RIGHT = KeyboardKey.KEY_D
     MAP = KeyboardKey.KEY_M
+    JUMP = KeyboardKey.KEY_SPACE
     #
     
 class InputHandler:
@@ -28,7 +29,6 @@ class InputHandler:
             logging.info("Moving back")
             self.camera.step_back()
             self.camera.step_back()
-        
         if is_key_down(Key.STRAFE_RIGHT):
             logging.info("Moving right")
             self.camera.step_right()
@@ -36,7 +36,8 @@ class InputHandler:
             logging.info("Moving left")
             self.camera.step_left()
             self.camera.step_left()
-        #-----------------------------#
+        #------------MAP--------------#
         if is_key_pressed(Key.MAP):
+            logging.info("Toggling map")
             self.engine.map_renderer.is_draw_map = not self.engine.map_renderer.is_draw_map
             self.engine.view_renderer.update_screen_tint()

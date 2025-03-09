@@ -1,5 +1,7 @@
 from settings import *
 
+def ease_out_cubic(t):
+    return 1 - pow(1 - t, 3)
 
 class Camera:
     def __init__(self, engine):
@@ -24,6 +26,12 @@ class Camera:
         self.pitch = 0.0
         self.delta_yaw = 0.0
         self.delta_pitch = 0.0
+        #
+        self.jump_velocity = 0.0
+        self.is_jumping = False
+        self.gravity = GRAVITY
+        self.jump_start_height = JUMP_START_POS
+        self.jump_duration = JUMP_DURATION
         
     def get_yaw_pitch(self):
         mouse_delta = ray.get_mouse_delta()
@@ -59,6 +67,31 @@ class Camera:
         self.update_pos_2d()
         self.set_yaw_pitch()
         self.move()
+        self.apply_gravity()
+        
+    def apply_gravity(self):
+        if self.is_jumping:
+            self.jump_velocity += self.gravity * self.app.dt
+            self.jump_duration += self.app.dt
+            #
+            t = JUMP_DURATION
+            eased_t = ease_out_cubic(t)
+            #
+            self.pos_3d.y = self.jump_start_height + self.jump_velocity * eased_t * self.app.dt
+            self.target.y = self.pos_3d.y
+            #
+            if self.pos_3d.y <= CAM_HEIGHT: #Ground check
+                self.target.y = CAM_HEIGHT
+                self.is_jumping = False
+                self.jump_velocity = 0.0
+                self.jump_duration = 0.0
+        else:
+            if ray.is_key_pressed(ray.KEY_SPACE):
+                self.is_jumping = True
+                self.jump_velocity = JUMP_VELOCITY
+                self.jump_start_height = self.pos_3d.y
+                self.jump_duration = 0.0
+                
 
     def update_vectors(self):
         self.forward = self.get_forward()
